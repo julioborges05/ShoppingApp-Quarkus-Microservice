@@ -1,0 +1,1 @@
+docker run --name shopping-app -p 5432:5432 -e POSTGRES_USER=quarkus -e POSTGRES_PASSWORD=quarkus -e POSTGRES_DB=shopping-app -d postgres
