@@ -1,6 +1,4 @@
--- This file allow to write SQL commands that will be emitted in test and dev.
--- The commands are commented as their support depends of the database
--- insert into myentity (id, field) values(1, 'field-1');
--- insert into myentity (id, field) values(2, 'field-2');
--- insert into myentity (id, field) values(3, 'field-3');
--- alter sequence myentity_seq restart with 4;
+insert into product(id, name, price) values
+(nextVal('product_sequence'), 'coca-cola', 7.5),
+(nextVal('product_sequence'), 'frango desfiado', 29.9),
+(nextVal('product_sequence'), 'picanha', 105.49);

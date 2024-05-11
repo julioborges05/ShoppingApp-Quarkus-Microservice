@@ -52,4 +52,18 @@ public class ProductService {
 
         return new ProductDTO(product.getId(), product.getName(), product.getPrice());
     }
+
+    @Transactional
+    public Long deleteById(Long id) {
+        Optional<Product> optionalProduct = Product.findByIdOptional(id);
+
+        if(optionalProduct.isEmpty())
+            throw new NotFoundException("Produto não encontrado");
+
+        Product product = optionalProduct.get();
+
+        product.delete();
+
+        return product.getId();
+    }
 }

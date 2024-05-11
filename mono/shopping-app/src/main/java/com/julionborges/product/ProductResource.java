@@ -39,4 +39,9 @@ public class ProductResource {
         return productService.updateProduct(updateProduct);
     }
 
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public Long deleteById(@QueryParam("id") Long id) {
+        return productService.deleteById(id);
+    }
 }

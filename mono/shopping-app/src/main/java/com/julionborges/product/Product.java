@@ -1,16 +1,20 @@
 package com.julionborges.product;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Product extends PanacheEntityBase {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name = "productSequence",
+            sequenceName = "product_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productSequence")
     private Long id;
+    @Column(columnDefinition = "varchar(50)")
     private String name;
     private Float price;
 
