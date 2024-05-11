@@ -15,7 +15,7 @@ public class ProductService {
         return Product
                 .<Product>listAll()
                 .stream()
-                .map(product -> new ProductDTO(product.getId(), product.getName(), product.getPrice()))
+                .map(product -> new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -26,16 +26,16 @@ public class ProductService {
             throw new NotFoundException("Product not found");
 
         Product product = productOptional.get();
-        return new ProductDTO(product.getId(), product.getName(), product.getPrice());
+        return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
     }
 
     @Transactional
     public ProductDTO newProduct(ProductDTO newProduct) {
-        Product product = new Product(newProduct.id(), newProduct.name(), newProduct.price());
+        Product product = new Product(newProduct.id(), newProduct.name(), newProduct.price(), newProduct.quantity());
         product.setId(null);
         product.persist();
 
-        return new ProductDTO(product.getId(), product.getName(), product.getPrice());
+        return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
     }
 
     @Transactional
@@ -50,7 +50,7 @@ public class ProductService {
         product.setPrice(updateProduct.price());
         product.persist();
 
-        return new ProductDTO(product.getId(), product.getName(), product.getPrice());
+        return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
     }
 
     @Transactional
@@ -61,7 +61,6 @@ public class ProductService {
             throw new NotFoundException("Produto não encontrado");
 
         Product product = optionalProduct.get();
-
         product.delete();
 
         return product.getId();

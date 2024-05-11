@@ -14,17 +14,18 @@ public class Product extends PanacheEntityBase {
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productSequence")
     private Long id;
-    @Column(columnDefinition = "varchar(50)")
     private String name;
-    private Float price;
+    private float price;
+    private int quantity;
 
     public Product() {
     }
 
-    public Product(Long id, String name, Float price) {
+    public Product(long id, String name, float price, int quantity) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.quantity = quantity;
     }
 
     public Long getId() {
@@ -43,12 +44,20 @@ public class Product extends PanacheEntityBase {
         this.name = name;
     }
 
-    public Float getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
+    public void setPrice(float price) {
         this.price = price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     @Override
@@ -57,6 +66,7 @@ public class Product extends PanacheEntityBase {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
+                ", quantity=" + quantity +
                 '}';
     }
 }
