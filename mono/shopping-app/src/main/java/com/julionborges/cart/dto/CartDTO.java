@@ -1,6 +1,6 @@
-package com.julionborges.shopping;
+package com.julionborges.cart.dto;
 
-import com.julionborges.shopping.cart.CartStatusEnum;
+import com.julionborges.cart.model.CartStatusEnum;
 
 import java.util.List;
 

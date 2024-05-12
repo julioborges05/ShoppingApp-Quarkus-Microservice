@@ -48,6 +48,7 @@ public class ProductService {
         Product product = optionalProduct.get();
         product.setName(updateProduct.name());
         product.setPrice(updateProduct.price());
+        product.setQuantity(updateProduct.quantity());
         product.persist();
 
         return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());

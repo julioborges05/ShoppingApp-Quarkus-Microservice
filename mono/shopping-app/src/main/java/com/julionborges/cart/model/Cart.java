@@ -1,6 +1,5 @@
-package com.julionborges.shopping.cart;
+package com.julionborges.cart.model;
 
-import com.julionborges.shopping.cartProduct.CartProduct;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 

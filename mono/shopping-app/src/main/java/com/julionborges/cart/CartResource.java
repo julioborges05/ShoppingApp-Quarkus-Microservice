@@ -1,10 +1,9 @@
-package com.julionborges.shopping;
+package com.julionborges.cart;
 
+import com.julionborges.cart.dto.CartDTO;
+import com.julionborges.cart.service.CartService;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
@@ -25,6 +24,12 @@ public class CartResource {
     @Path("findById")
     public CartDTO findById(@QueryParam("id") Long id) {
         return cartService.findById(id);
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public CartDTO newCart(CartDTO cartDTO) {
+        return cartService.newCart(cartDTO);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.julionborges.shopping.cart;
+package com.julionborges.cart.model;
 
 public enum CartStatusEnum {
     PENDING("Pending"),
