@@ -23,7 +23,7 @@ public class ProductService {
         Optional<Product> productOptional = Product.findByIdOptional(id);
 
         if(productOptional.isEmpty())
-            throw new NotFoundException("Product not found");
+            throw new NotFoundException("Produto não encontrado");
 
         Product product = productOptional.get();
         return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());

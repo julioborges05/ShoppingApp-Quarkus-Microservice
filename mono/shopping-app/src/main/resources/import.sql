@@ -9,3 +9,19 @@ insert into users(id, name) values
 (nextVal('user_sequence'), 'Júlio Borges'),
 (nextVal('user_sequence'), 'Fulano da Silva'),
 (nextVal('user_sequence'), 'Quarkus user');
+
+---
+
+insert into cart(id, total_price, cart_status) values
+(nextVal('cart_sequence'), null, 'PENDING'),
+(nextVal('cart_sequence'), null, 'PENDING'),
+(nextVal('cart_sequence'), null, 'PENDING');
+
+insert into cart_v_product(id, cart_id, product_id, product_quantity) values
+(nextVal('cart_v_product_sequence'), 1, 1, 2),
+(nextVal('cart_v_product_sequence'), 1, 2, 3),
+(nextVal('cart_v_product_sequence'), 1, 3, 3),
+(nextVal('cart_v_product_sequence'), 2, 1, 1),
+(nextVal('cart_v_product_sequence'), 2, 2, 5),
+(nextVal('cart_v_product_sequence'), 3, 1, 1),
+(nextVal('cart_v_product_sequence'), 3, 2, 2);
