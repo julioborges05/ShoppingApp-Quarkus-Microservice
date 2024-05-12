@@ -32,4 +32,10 @@ public class CartResource {
         return cartService.newCart(cartDTO);
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public CartDTO updateCart(CartDTO cartDTO) {
+        return cartService.updateCart(cartDTO);
+    }
+
 }

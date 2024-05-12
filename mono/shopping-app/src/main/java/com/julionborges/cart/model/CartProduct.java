@@ -1,7 +1,6 @@
 package com.julionborges.cart.model;
 
 import com.julionborges.product.Product;
-import com.julionborges.cart.model.Cart;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
@@ -21,7 +20,7 @@ public class CartProduct extends PanacheEntityBase {
     @ManyToOne(fetch = FetchType.EAGER)
     private Cart cart;
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
     @Column(name = "product_quantity")
     private int productQuantity;
