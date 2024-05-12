@@ -12,10 +12,10 @@ insert into users(id, name) values
 
 ---
 
-insert into cart(id, total_price, cart_status) values
-(nextVal('cart_sequence'), null, 'PENDING'),
-(nextVal('cart_sequence'), null, 'PENDING'),
-(nextVal('cart_sequence'), null, 'PENDING');
+insert into cart(id, total_price, cart_status, user_id) values
+(nextVal('cart_sequence'), null, 'PENDING', 1),
+(nextVal('cart_sequence'), null, 'PENDING', 2),
+(nextVal('cart_sequence'), null, 'PENDING', 3);
 
 insert into cart_v_product(id, cart_id, product_id, product_quantity) values
 (nextVal('cart_v_product_sequence'), 1, 1, 2),

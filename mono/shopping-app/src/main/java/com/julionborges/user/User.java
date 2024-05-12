@@ -25,6 +25,11 @@ public class User extends PanacheEntityBase {
         this.name = name;
     }
 
+    public User(UserDTO userDTO) {
+        this.id = userDTO.id();
+        this.name = userDTO.name();
+    }
+
     public Long getId() {
         return id;
     }

@@ -9,6 +9,8 @@ import com.julionborges.cart.repository.CartProductRepository;
 import com.julionborges.product.Product;
 import com.julionborges.product.ProductDTO;
 import com.julionborges.product.ProductService;
+import com.julionborges.user.User;
+import com.julionborges.user.UserDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -40,7 +42,7 @@ public class CartService {
                             .toList();
 
                     return new CartDTO(cart.getId(), cartProductList, CartStatusEnum.valueOf(cart.getCartStatus()),
-                            cart.getTotalPrice());
+                            cart.getTotalPrice(), cart.getUser().getId());
                 })
                 .collect(Collectors.toList());
     }
@@ -54,14 +56,18 @@ public class CartService {
                 .map(cartProduct -> new CartProductDTO(cartProduct.getProduct().getId(), cartProduct.getProductQuantity()))
                 .toList();
 
-        return new CartDTO(cart.getId(), productDTOList, CartStatusEnum.valueOf(cart.getCartStatus()), cart.getTotalPrice());
+        return new CartDTO(cart.getId(), productDTOList, CartStatusEnum.valueOf(cart.getCartStatus()),
+                cart.getTotalPrice(), cart.getUser().getId());
     }
 
     @Transactional
     public CartDTO newCart(CartDTO cartDTO) {
+        User user = User.<User>findByIdOptional(cartDTO.userId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         float totalPrice = updateProductQuantityAfterGetTotalPrice(cartDTO.products());
 
-        Cart cart = new Cart(null, totalPrice, CartStatusEnum.PENDING.name(), null);
+        Cart cart = new Cart(null, totalPrice, CartStatusEnum.PENDING.name(), null, user.getId());
         cart.persist();
 
         List<CartProductDTO> savedCartProduct = new ArrayList<>();
@@ -73,7 +79,8 @@ public class CartService {
             savedCartProduct.add(new CartProductDTO(cartProduct.getProduct().getId(), cartProduct.getProductQuantity()));
         }
 
-        return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()), cart.getTotalPrice());
+        return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()),
+                cart.getTotalPrice(), cart.getUser().getId());
     }
 
     private float updateProductQuantityAfterGetTotalPrice(List<CartProductDTO> cartProductDTOList) {
@@ -99,6 +106,9 @@ public class CartService {
         Cart cart = Cart.<Cart>findByIdOptional(cartDTO.id())
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
+        User user = User.<User>findByIdOptional(cartDTO.userId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         deleteCartProductsThatAreRemovesWhenUpdateTheCart(cartDTO, cart);
 
         float totalPrice = (float) 0;
@@ -116,9 +126,11 @@ public class CartService {
         }
 
         cart.setTotalPrice(totalPrice);
+        cart.setUser(user);
         cart.persist();
 
-        return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()), totalPrice);
+        return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()), totalPrice,
+                cart.getUser().getId());
     }
 
     private float updateCartProductAndGetPrice(Cart cart, List<CartProductDTO> savedCartProduct, CartProductDTO cartProductDTO,
@@ -209,7 +221,8 @@ public class CartService {
                 .map(cartProduct -> new CartProductDTO(cartProduct.getProduct().getId(), cartProduct.getProductQuantity()))
                 .toList();
 
-        return new CartDTO(cart.getId(), cartProductDTOList, CartStatusEnum.FINISHED, cart.getTotalPrice());
+        return new CartDTO(cart.getId(), cartProductDTOList, CartStatusEnum.FINISHED, cart.getTotalPrice(),
+                cart.getUser().getId());
     }
 
     @Transactional
@@ -229,6 +242,6 @@ public class CartService {
         cart.setCartStatus(CartStatusEnum.ABORTED.name());
         cart.persist();
 
-        return new CartDTO(cart.getId(), null, CartStatusEnum.ABORTED, null);
+        return new CartDTO(cart.getId(), null, CartStatusEnum.ABORTED, null, cart.getUser().getId());
     }
 }

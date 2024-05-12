@@ -1,5 +1,6 @@
 package com.julionborges.cart.model;
 
+import com.julionborges.user.User;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
@@ -22,15 +23,18 @@ public class Cart extends PanacheEntityBase {
     private String cartStatus;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "cart")
     private List<CartProduct> cartProductList;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
 
     public Cart() {
     }
 
-    public Cart(Long id, Float totalPrice, String cartStatus, List<CartProduct> cartProductList) {
+    public Cart(Long id, Float totalPrice, String cartStatus, List<CartProduct> cartProductList, Long userId) {
         this.id = id;
         this.totalPrice = totalPrice;
         this.cartStatus = cartStatus;
         this.cartProductList = cartProductList;
+        this.user = new User(userId, null);
     }
 
     public Long getId() {
@@ -63,5 +67,13 @@ public class Cart extends PanacheEntityBase {
 
     public void setCartProductList(List<CartProduct> cartProductList) {
         this.cartProductList = cartProductList;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

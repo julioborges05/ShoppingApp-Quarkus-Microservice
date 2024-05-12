@@ -26,7 +26,9 @@ create table if not exists cart(
     id bigint not null default nextVal('cart_sequence'),
     total_price float,
     cart_status varchar(20) not null,
-    constraint cart_pkey primary key (id)
+    user_id bigint not null,
+    constraint cart_pkey primary key (id),
+    constraint user_id_fkey foreign key (user_id) references users (id) on delete cascade
 );
 
 
