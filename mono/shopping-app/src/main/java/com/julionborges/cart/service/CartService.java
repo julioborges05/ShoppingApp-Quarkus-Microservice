@@ -181,4 +181,20 @@ public class CartService {
 
         return true;
     }
+
+    @Transactional
+    public Long deleteById(Long id) {
+        Cart cart = (Cart) Cart.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+
+        for(CartProduct cartProduct : cart.getCartProductList()) {
+            Product product = cartProduct.getProduct();
+            product.setQuantity(product.getQuantity() + cartProduct.getProductQuantity());
+            product.persist();
+        }
+
+        cart.delete();
+
+        return cart.getId();
+    }
 }

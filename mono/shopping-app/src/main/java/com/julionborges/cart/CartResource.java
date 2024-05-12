@@ -38,4 +38,9 @@ public class CartResource {
         return cartService.updateCart(cartDTO);
     }
 
+    @DELETE
+    public Long deleteCart(@QueryParam("id") Long id) {
+        return cartService.deleteById(id);
+    }
+
 }

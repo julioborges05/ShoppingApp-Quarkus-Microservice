@@ -17,7 +17,7 @@ public class CartProduct extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cartProductSequence")
     private Long id;
     @JoinColumn(name = "cart_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Cart cart;
     @JoinColumn(name = "product_id")
     @ManyToOne(fetch = FetchType.EAGER)
