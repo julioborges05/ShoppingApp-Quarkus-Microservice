@@ -11,7 +11,7 @@ import java.util.List;
 public class ProductResource {
 
     @Inject
-    private ProductService productService;
+    ProductService productService;
 
     @GET
     public List<ProductDTO> listAll() {

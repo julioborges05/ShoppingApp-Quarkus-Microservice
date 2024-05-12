@@ -11,7 +11,7 @@ import java.util.List;
 public class UserResource {
 
     @Inject
-    private UserService userService;
+    UserService userService;
 
     @GET
     public List<UserDTO> listAll() {

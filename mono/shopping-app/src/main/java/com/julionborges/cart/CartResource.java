@@ -13,7 +13,7 @@ import java.util.List;
 public class CartResource {
 
     @Inject
-    private CartService cartService;
+    CartService cartService;
 
     @GET
     public List<CartDTO> listAll() {
@@ -36,6 +36,18 @@ public class CartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public CartDTO updateCart(CartDTO cartDTO) {
         return cartService.updateCart(cartDTO);
+    }
+
+    @PUT
+    @Path("finishCartById")
+    public CartDTO finishCartById(@QueryParam("id") Long id) {
+        return cartService.finishCartById(id);
+    }
+
+    @PUT
+    @Path("abortCartById")
+    public CartDTO abortCartById(@QueryParam("id") Long id) {
+        return cartService.abortCartById(id);
     }
 
     @DELETE

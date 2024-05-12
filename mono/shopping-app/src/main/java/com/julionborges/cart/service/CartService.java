@@ -12,7 +12,6 @@ import com.julionborges.product.ProductService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,10 +20,10 @@ import java.util.stream.Collectors;
 public class CartService {
 
     @Inject
-    private ProductService productService;
+    ProductService productService;
 
     @Inject
-    private CartProductRepository cartProductRepository;
+    CartProductRepository cartProductRepository;
 
     public List<CartDTO> listAll() {
         List<Cart> cartList = Cart.listAll();
@@ -47,12 +46,8 @@ public class CartService {
     }
 
     public CartDTO findById(Long id) {
-        Optional<Cart> cartOptional = Cart.findByIdOptional(id);
-
-        if(cartOptional.isEmpty())
-            throw new NotFoundException("Carrinho não encontrado");
-
-        Cart cart = cartOptional.get();
+        Cart cart = Cart.<Cart>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
         List<CartProductDTO> productDTOList = cart.getCartProductList()
                 .stream()
@@ -101,7 +96,7 @@ public class CartService {
 
     @Transactional
     public CartDTO updateCart(CartDTO cartDTO) {
-        Cart cart = (Cart) Cart.findByIdOptional(cartDTO.id())
+        Cart cart = Cart.<Cart>findByIdOptional(cartDTO.id())
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
         deleteCartProductsThatAreRemovesWhenUpdateTheCart(cartDTO, cart);
@@ -153,7 +148,7 @@ public class CartService {
     }
 
     private Product getProduct(Long productId) {
-        return (Product) Product.findByIdOptional(productId)
+        return Product.<Product>findByIdOptional(productId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
 
@@ -184,7 +179,7 @@ public class CartService {
 
     @Transactional
     public Long deleteById(Long id) {
-        Cart cart = (Cart) Cart.findByIdOptional(id)
+        Cart cart = Cart.<Cart>findByIdOptional(id)
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
         for(CartProduct cartProduct : cart.getCartProductList()) {
@@ -196,5 +191,44 @@ public class CartService {
         cart.delete();
 
         return cart.getId();
+    }
+
+    @Transactional
+    public CartDTO finishCartById(Long id) {
+        Cart cart = Cart.<Cart>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+
+        if(cart.getCartStatus().equals(CartStatusEnum.ABORTED.name()))
+            throw new RuntimeException("Não é possível finalizar um carrinho abortado, crie um novo carrinho");
+
+        cart.setCartStatus(CartStatusEnum.FINISHED.name());
+        cart.persist();
+
+        List<CartProductDTO> cartProductDTOList = cart.getCartProductList()
+                .stream()
+                .map(cartProduct -> new CartProductDTO(cartProduct.getProduct().getId(), cartProduct.getProductQuantity()))
+                .toList();
+
+        return new CartDTO(cart.getId(), cartProductDTOList, CartStatusEnum.FINISHED, cart.getTotalPrice());
+    }
+
+    @Transactional
+    public CartDTO abortCartById(Long id) {
+        Cart cart = Cart.<Cart>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+
+        for(CartProduct cartProduct : cart.getCartProductList()) {
+            Product product = cartProduct.getProduct();
+            product.setQuantity(product.getQuantity() + cartProduct.getProductQuantity());
+            product.persist();
+
+            cartProduct.setProductQuantity(0);
+            cartProduct.persist();
+        }
+
+        cart.setCartStatus(CartStatusEnum.ABORTED.name());
+        cart.persist();
+
+        return new CartDTO(cart.getId(), null, CartStatusEnum.ABORTED, null);
     }
 }
