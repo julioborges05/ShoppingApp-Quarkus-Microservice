@@ -2,10 +2,8 @@ package com.julionborges.product;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -20,12 +18,8 @@ public class ProductService {
     }
 
     public ProductDTO findById(Long id) {
-        Optional<Product> productOptional = Product.findByIdOptional(id);
-
-        if(productOptional.isEmpty())
-            throw new NotFoundException("Produto não encontrado");
-
-        Product product = productOptional.get();
+        Product product = Product.<Product>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
     }
 
@@ -40,12 +34,8 @@ public class ProductService {
 
     @Transactional
     public ProductDTO updateProduct(ProductDTO updateProduct) {
-        Optional<Product> optionalProduct = Product.findByIdOptional(updateProduct.id());
-
-        if(optionalProduct.isEmpty())
-            throw new NotFoundException("Produto não encontrado");
-
-        Product product = optionalProduct.get();
+        Product product = Product.<Product>findByIdOptional(updateProduct.id())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         product.setName(updateProduct.name());
         product.setPrice(updateProduct.price());
         product.setQuantity(updateProduct.quantity());
@@ -56,12 +46,8 @@ public class ProductService {
 
     @Transactional
     public Long deleteById(Long id) {
-        Optional<Product> optionalProduct = Product.findByIdOptional(id);
-
-        if(optionalProduct.isEmpty())
-            throw new NotFoundException("Produto não encontrado");
-
-        Product product = optionalProduct.get();
+        Product product = Product.<Product>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         product.delete();
 
         return product.getId();

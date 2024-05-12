@@ -2,10 +2,8 @@ package com.julionborges.user;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -19,12 +17,8 @@ public class UserService {
     }
 
     public UserDTO findById(Long id) {
-        Optional<User> userOptional = User.findByIdOptional(id);
-
-        if(userOptional.isEmpty())
-            throw new NotFoundException("Usuário não encontrado");
-
-        User user = userOptional.get();
+        User user = User.<User>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         return new UserDTO(user.getId(), user.getName());
     }
@@ -40,12 +34,8 @@ public class UserService {
 
     @Transactional
     public UserDTO updateUser(UserDTO userDTO) {
-        Optional<User> optionalUser = User.findByIdOptional(userDTO.id());
-
-        if(optionalUser.isEmpty())
-            throw new NotFoundException("Usuário não encontrado");
-
-        User user = optionalUser.get();
+        User user = User.<User>findByIdOptional(userDTO.id())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         user.setName(userDTO.name());
         user.persist();
 
@@ -54,12 +44,8 @@ public class UserService {
 
     @Transactional
     public Long deleteById(Long id) {
-        Optional<User> optionalUser = User.findByIdOptional(id);
-
-        if(optionalUser.isEmpty())
-            throw new NotFoundException("Usuário não encontrado");
-
-        User user = optionalUser.get();
+        User user = User.<User>findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         user.delete();
 
         return user.getId();

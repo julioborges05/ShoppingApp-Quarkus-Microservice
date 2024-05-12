@@ -11,6 +11,7 @@ import com.julionborges.product.ProductDTO;
 import com.julionborges.product.ProductService;
 import com.julionborges.user.User;
 import com.julionborges.user.UserDTO;
+import com.julionborges.user.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -23,6 +24,9 @@ public class CartService {
 
     @Inject
     ProductService productService;
+
+    @Inject
+    UserService userService;
 
     @Inject
     CartProductRepository cartProductRepository;
@@ -62,12 +66,11 @@ public class CartService {
 
     @Transactional
     public CartDTO newCart(CartDTO cartDTO) {
-        User user = User.<User>findByIdOptional(cartDTO.userId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        UserDTO user = userService.findById(cartDTO.userId());
 
         float totalPrice = updateProductQuantityAfterGetTotalPrice(cartDTO.products());
 
-        Cart cart = new Cart(null, totalPrice, CartStatusEnum.PENDING.name(), null, user.getId());
+        Cart cart = new Cart(null, totalPrice, CartStatusEnum.PENDING.name(), null, user.id());
         cart.persist();
 
         List<CartProductDTO> savedCartProduct = new ArrayList<>();
@@ -106,8 +109,7 @@ public class CartService {
         Cart cart = Cart.<Cart>findByIdOptional(cartDTO.id())
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
-        User user = User.<User>findByIdOptional(cartDTO.userId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        UserDTO user = userService.findById(cartDTO.userId());
 
         deleteCartProductsThatAreRemovesWhenUpdateTheCart(cartDTO, cart);
 
@@ -126,7 +128,7 @@ public class CartService {
         }
 
         cart.setTotalPrice(totalPrice);
-        cart.setUser(user);
+        cart.setUser(new User(user));
         cart.persist();
 
         return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()), totalPrice,
