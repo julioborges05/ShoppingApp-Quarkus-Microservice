@@ -1,0 +1,1 @@
+docker run --name user-api -p 5434:5432 -d julioborges05/cart-api
