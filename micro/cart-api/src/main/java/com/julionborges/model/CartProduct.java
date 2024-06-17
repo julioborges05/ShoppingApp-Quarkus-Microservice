@@ -34,7 +34,6 @@ public class CartProduct extends PanacheEntityBase {
         this.id = id;
         this.cart = cart;
         this.productId = product.id();
-        this.product = product;
         this.productQuantity = productQuantity;
     }
 

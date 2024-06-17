@@ -25,8 +25,6 @@ public class Cart extends PanacheEntityBase {
     private List<CartProduct> cartProductList;
     @Column(name = "user_id")
     private Long userId;
-    @Transient
-    private UserDTO user;
 
     public Cart() {
     }
@@ -69,14 +67,6 @@ public class Cart extends PanacheEntityBase {
 
     public void setCartProductList(List<CartProduct> cartProductList) {
         this.cartProductList = cartProductList;
-    }
-
-    public UserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserDTO user) {
-        this.user = user;
     }
 
     public Long getUserId() {

@@ -41,11 +41,11 @@ public class CartService {
                 .map(cart -> {
                     List<CartProductDTO> cartProductList = cart.getCartProductList()
                             .stream()
-                            .map(cartProduct -> new CartProductDTO(cartProduct.getProduct().id(), cartProduct.getProductQuantity()))
+                            .map(cartProduct -> new CartProductDTO(cartProduct.getProductId(), cartProduct.getProductQuantity()))
                             .toList();
 
                     return new CartDTO(cart.getId(), cartProductList, CartStatusEnum.valueOf(cart.getCartStatus()),
-                            cart.getTotalPrice(), cart.getUser().id());
+                            cart.getTotalPrice(), cart.getUserId());
                 })
                 .collect(Collectors.toList());
     }
@@ -56,11 +56,11 @@ public class CartService {
 
         List<CartProductDTO> productDTOList = cart.getCartProductList()
                 .stream()
-                .map(cartProduct -> new CartProductDTO(cartProduct.getProduct().id(), cartProduct.getProductQuantity()))
+                .map(cartProduct -> new CartProductDTO(cartProduct.getProductId(), cartProduct.getProductQuantity()))
                 .toList();
 
         return new CartDTO(cart.getId(), productDTOList, CartStatusEnum.valueOf(cart.getCartStatus()),
-                cart.getTotalPrice(), cart.getUser().id());
+                cart.getTotalPrice(), cart.getUserId());
     }
 
     @Transactional
@@ -78,11 +78,11 @@ public class CartService {
 
             CartProduct cartProduct = new CartProduct(null, cart, product, cartProductDTO.quantity());
             cartProduct.persist();
-            savedCartProduct.add(new CartProductDTO(cartProduct.getProduct().id(), cartProduct.getProductQuantity()));
+            savedCartProduct.add(new CartProductDTO(cartProduct.getProductId(), cartProduct.getProductQuantity()));
         }
 
         return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()),
-                cart.getTotalPrice(), cart.getUser().id());
+                cart.getTotalPrice(), cart.getUserId());
     }
 
     private float updateProductQuantityAfterGetTotalPrice(List<CartProductDTO> cartProductDTOList) {
@@ -127,11 +127,10 @@ public class CartService {
         }
 
         cart.setTotalPrice(totalPrice);
-        cart.setUser(user);
         cart.persist();
 
         return new CartDTO(cart.getId(), savedCartProduct, CartStatusEnum.valueOf(cart.getCartStatus()), totalPrice,
-                cart.getUser().id());
+                cart.getUserId());
     }
 
     private float updateCartProductAndGetPrice(Cart cart, List<CartProductDTO> savedCartProduct, CartProductDTO cartProductDTO,
@@ -144,7 +143,7 @@ public class CartService {
         float price = cartProductDTO.quantity() * product.price();
         cartProduct.setProductQuantity(cartProductDTO.quantity());
         cartProduct.persist();
-        savedCartProduct.add(new CartProductDTO(cartProduct.getProduct().id(), cartProduct.getProductQuantity()));
+        savedCartProduct.add(new CartProductDTO(cartProduct.getProductId(), cartProduct.getProductQuantity()));
         return price;
     }
 
@@ -156,7 +155,7 @@ public class CartService {
 
         CartProduct cartProduct = new CartProduct(null, cart, product, cartProductDTO.quantity());
         cartProduct.persist();
-        savedCartProduct.add(new CartProductDTO(cartProduct.getProduct().id(), cartProduct.getProductQuantity()));
+        savedCartProduct.add(new CartProductDTO(cartProduct.getProductId(), cartProduct.getProductQuantity()));
         return price;
     }
 
@@ -169,7 +168,7 @@ public class CartService {
 
     private boolean cartProductDtoIsAdded(CartProductDTO cartProductDTO, List<CartProduct> cartProductList) {
         for(CartProduct cartProduct : cartProductList) {
-            if(cartProduct.getProduct().id().equals(cartProductDTO.productId()))
+            if(cartProduct.getProductId().equals(cartProductDTO.productId()))
                 return false;
         }
 
@@ -178,7 +177,7 @@ public class CartService {
 
     private boolean cartProductIsRemovedFromCartProductDTO(CartProduct cartProduct, List<CartProductDTO> cartProductDTOList) {
         for(CartProductDTO cartProductDTO : cartProductDTOList) {
-            if(cartProduct.getProduct().id().equals(cartProductDTO.productId()))
+            if(cartProduct.getProductId().equals(cartProductDTO.productId()))
                 return false;
         }
 
@@ -219,11 +218,11 @@ public class CartService {
 
         List<CartProductDTO> cartProductDTOList = cart.getCartProductList()
                 .stream()
-                .map(cartProduct -> new CartProductDTO(cartProduct.getProduct().id(), cartProduct.getProductQuantity()))
+                .map(cartProduct -> new CartProductDTO(cartProduct.getProductId(), cartProduct.getProductQuantity()))
                 .toList();
 
         return new CartDTO(cart.getId(), cartProductDTOList, CartStatusEnum.FINISHED, cart.getTotalPrice(),
-                cart.getUser().id());
+                cart.getUserId());
     }
 
     @Transactional
@@ -247,6 +246,6 @@ public class CartService {
         cart.setCartStatus(CartStatusEnum.ABORTED.name());
         cart.persist();
 
-        return new CartDTO(cart.getId(), null, CartStatusEnum.ABORTED, null, cart.getUser().id());
+        return new CartDTO(cart.getId(), null, CartStatusEnum.ABORTED, null, cart.getUserId());
     }
 }
