@@ -5,8 +5,7 @@ create table if not exists cart(
     total_price float,
     cart_status varchar(20) not null,
     user_id bigint not null,
-    constraint cart_pkey primary key (id),
-    constraint user_id_fkey foreign key (user_id) references users (id) on delete cascade
+    constraint cart_pkey primary key (id)
 );
 
 
@@ -18,6 +17,5 @@ create table if not exists cart_v_product(
     product_id bigint not null,
     product_quantity integer not null default 1,
     constraint cart_v_product_pkey primary key (id),
-    constraint cart_id_fkey foreign key (cart_id) references cart (id) on delete cascade,
-    constraint product_id_fkey foreign key (product_id) references product (id) on delete cascade
+    constraint cart_id_fkey foreign key (cart_id) references cart (id) on delete cascade
 );
